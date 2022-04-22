@@ -4,8 +4,25 @@ import java.math.BigInteger
 import kotlin.math.abs
 
 fun main() {
-    println(productFib(5895).get(0))
-    println(productFib(5895).get(1))
+    val friends1 = arrayOf("A1", "A3", "A4", "A5")
+    val fTowns1 = arrayOf(arrayOf("A1", "X1"), arrayOf("A2", "X2"), arrayOf("A3", "X3"), arrayOf("A4", "X4"))
+    val distTable1: MutableMap<String, Double> = HashMap()
+    distTable1["X1"] = 100.0
+    distTable1["X2"] = 200.0
+    distTable1["X3"] = 250.0
+    distTable1["X4"] = 300.0
+    println(tour(friends1, fTowns1, distTable1))
+
+    val friends2 = arrayOf("A1", "A2", "A3", "A4", "A5", "A6")
+    val fTowns2 = arrayOf(arrayOf("A1", "X1"), arrayOf("A2", "X2"), arrayOf("A3", "X3"), arrayOf("A4", "X4"), arrayOf("A5", "X5"))
+    val distTable2: MutableMap<String, Double> = HashMap()
+    distTable2["X1"] = 100.0
+    distTable2["X2"] = 200.0
+    distTable2["X3"] = 250.0
+    distTable2["X4"] = 300.0
+    distTable2["X5"] = 320.0
+    println(tour(friends2, fTowns2, distTable2))
+
 }
 
 
@@ -207,7 +224,73 @@ fun productFib(prod:Long):LongArray {
 //    return longArrayOf(a, b, if (check == prod) 1L else 0L)
 }
 
+//Born a misinterpretation of this kata, your task here is pretty simple: given an array of values and an amount of beggars, you are supposed to return an array with the sum of what each beggar brings home, assuming they all take regular turns, from the first to the last.
+//
+//For example: [1,2,3,4,5] for 2 beggars will return a result of [9,6], as the first one takes [1,3,5], the second collects [2,4].
+//
+//The same array with 3 beggars would have in turn have produced a better out come for the second beggar: [5,7,3], as they will respectively take [1,4], [2,5] and [3].
+//
+//Also note that not all beggars have to take the same amount of "offers", meaning that the length of the array is not necessarily a multiple of n; length can be even shorter, in which case the last beggars will of course take nothing (0).
+//
+//Note: in case you don't get why this kata is about English beggars, then you are not familiar on how religiously queues are taken in the kingdom ;)
+//
+//Note 2: do not modify the input array.
 fun beggars(values: List<Int>, n: Int): List<Int> {
-    return mutableListOf()
+    val list = mutableListOf<Int>()
+    for (i in 0 until n) {
+        var sum = 0
+        for (j in i until values.size step n) {
+            sum += values.get(j)
+        }
+        list.add(sum)
+    }
+    return list
+}
+
+//Your granny, who lives in town X0, has friends. These friends are given in an array, for example: array of friends is ["A1", "A2", "A3", "A4", "A5"].
+//
+//The order of friends in this array must not be changed since this order gives the order in which they will be visited.
+//
+//Friends inhabit towns and you get an array with friends and their towns (or an associative array), for example: [["A1", "X1"], ["A2", "X2"], ["A3", "X3"], ["A4", "X4"]] which means A1 is in town X1, A2 in town X2... It can happen that we do not know the town of one of the friends hence it will not be visited.
+//
+//Your granny wants to visit her friends and to know approximately how many miles she will have to travel. You will make the circuit that permits her to visit her friends. For example here the circuit will be:X0, X1, X2, X3, X4, X0 and you will compute approximately the total distance X0X1 + X1X2 + .. + X4X0.
+//
+//For the distances you are given an array or a dictionary that gives each distance X0X1, X0X2 and so on. For example (it depends on the language):
+//
+//[ ["X1", 100.0], ["X2", 200.0], ["X3", 250.0], ["X4", 300.0] ]
+//or
+//("X1" -> 100.0, "X2" -> 200.0, "X3" -> 250.0, "X4" -> 300.0)
+//which means that X1 is at 100.0 miles from X0, X2 at 200.0 miles from X0, etc... It's not real life, it's a story... : the towns X0, X1, .., X0 are placed in the following manner (see drawing below):
+//
+//X0X1X2 is a right triangle with the right angle in X1, X0X2X3 is a right triangle with the right angle in X2, ... In a travel X0, X1, .., Xi-1, Xi, Xi+1.., X0 you will suppose - to make it easier - that there is a right angle in Xi (i > 0).
+//
+//So if a town Xi is not visited you will consider that the triangle X0Xi-1Xi+1 is still a right triangle in Xi-1 and you can use the "Pythagorean_theorem".
+fun tour(arrFriends: Array<String>, ftwns: Array<Array<String>>, h: Map<String, Double>): Int {
+    val map = mutableMapOf<String, Double>()
+    val towns = mutableListOf<String>()
+
+    //add town to route, if arrFriend contains respective friend
+    for (subArray in ftwns) {
+        if (arrFriends.contains(subArray[0])) {
+            towns.add(subArray[1])
+        }
+
+    }
+    //add towns and distances to new map
+    for (s in towns) {
+        map.put(s, h[s]!!)
+    }
+
+
+    //initial distance (to the first friend + from the last friend
+    var sum = if (towns.size > 0) map[towns[0]]!! + map[towns[towns.size -1]]!! else return 0
+
+    //calculate sum of distances using Pythagorean theorem
+    for (i in 1 until map.size) {
+            val hypotenuse = map[towns[i]]!!
+            val leg = map[towns[i-1]]!!
+            sum += Math.sqrt(Math.pow(hypotenuse, 2.0) - Math.pow(leg, 2.0))
+    }
+    return sum.toInt()
 }
 
