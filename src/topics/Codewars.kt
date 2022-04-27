@@ -4,24 +4,17 @@ import java.math.BigInteger
 import kotlin.math.abs
 
 fun main() {
-    val friends1 = arrayOf("A1", "A3", "A4", "A5")
-    val fTowns1 = arrayOf(arrayOf("A1", "X1"), arrayOf("A2", "X2"), arrayOf("A3", "X3"), arrayOf("A4", "X4"))
-    val distTable1: MutableMap<String, Double> = HashMap()
-    distTable1["X1"] = 100.0
-    distTable1["X2"] = 200.0
-    distTable1["X3"] = 250.0
-    distTable1["X4"] = 300.0
-    println(tour(friends1, fTowns1, distTable1))
-
-    val friends2 = arrayOf("A1", "A2", "A3", "A4", "A5", "A6")
-    val fTowns2 = arrayOf(arrayOf("A1", "X1"), arrayOf("A2", "X2"), arrayOf("A3", "X3"), arrayOf("A4", "X4"), arrayOf("A5", "X5"))
-    val distTable2: MutableMap<String, Double> = HashMap()
-    distTable2["X1"] = 100.0
-    distTable2["X2"] = 200.0
-    distTable2["X3"] = 250.0
-    distTable2["X4"] = 300.0
-    distTable2["X5"] = 320.0
-    println(tour(friends2, fTowns2, distTable2))
+    val dr = ("/+1-541-754-3010 156 Alphand_St. <J Steeve>\n 133, Green, Rd. <E Kustur> NY-56423 ;+1-541-914-3010\n"
+            + "<Anastasia> +48-421-674-8974 Via Quirinal   Roma\n <P Salinger> Main Street, +1-098-512-2222, Denver\n"
+            + "<Q Salinge> Main Street, +1-098-512-2222, Denve\n" + "<R Salinge> Main Street, +1-098-512-2222, Denve\n"
+            + "<C Powel> *+19-421-674-8974 Chateau des Fosses Strasbourg F-68000\n <Bernard Deltheil> +1-498-512-2222; Mount Av.  Eldorado\n")
+    val s = "/+1-541-754-3010 156 Alphand_St. <J Steeve>\n 133, Green, Rd. <E Kustur> NY-56423 ;+41-541-754-3010!\n"
+    println(PhoneDir.phone(dr, "48-421-674-8974"))
+    println(PhoneDir.phone(s, "1-541-754-3010"))
+    val number = "12345!"
+    val num = "12345"
+    val numb = "123456"
+    println(numb.contains("(^|\\D)$num(\\D|$)".toRegex()))
 
 }
 
@@ -282,7 +275,7 @@ fun tour(arrFriends: Array<String>, ftwns: Array<Array<String>>, h: Map<String, 
     }
 
 
-    //initial distance (to the first friend + from the last friend
+    /* initial distance (to the first friend + from the last friend */
     var sum = if (towns.size > 0) map[towns[0]]!! + map[towns[towns.size -1]]!! else return 0
 
     //calculate sum of distances using Pythagorean theorem
