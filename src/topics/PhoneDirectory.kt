@@ -18,12 +18,17 @@ object PhoneDir {
 
 
     fun phone(strng: String, num: String): String {
-        //split string into lines
+
+        //split the string into lines
         val lines = strng.split("\n")
 
+        //the line to be parsed according to task
         var currentLine = ""
+
+        //the number of occurrences of the phone number in the string
         var count = 0
 
+        //the variable for the name to be found inside the currentLine between the angle brackets
         var name = ""
 
         //find a line with the given number in
@@ -31,6 +36,7 @@ object PhoneDir {
             //check if the line contains the given number, and it's not the part of another number
             if (s.contains("(^|\\D)$num(\\D|$)".toRegex())) {
                 count ++
+                //if there is more than 1 occurrence of the given number, and it's not the same duplicate note, return an error
                 if (count > 1
                     && !s.substring(s.indexOf('<') + 1, s.indexOf('>')).equals(name)) return "Error => Too many people: $num"
                 currentLine = s
@@ -38,8 +44,10 @@ object PhoneDir {
             }
         }
 
+        //if there's no given number in the given string return the error
         if (count == 0) return "Error => Not found: $num"
 
+        //remove name, number and redundant chars to use current line as address
         val address = currentLine
             .replace(name, "")
             .replace(num, "")
